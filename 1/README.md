@@ -40,6 +40,8 @@
     done
     ```
 
+    Il faut que ce script soit lancé au démarrage de la machine (avec crontab par exemple).
+
     Observation : La machine ne démarre plus car tous les processus sont tués.
 
 4) "Fork bomb"
@@ -47,5 +49,7 @@
     ```bash
     :(){ :|:& };:
     ```
+
+    Quand se script est lancé avec un cron au démarrrage, la machine lance des forks à l'infini et donc, elle devient inutilisable.
 
     Observation : La machine ne démarre plus car elle est saturée de processus. (Comparable à un DoS)
