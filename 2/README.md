@@ -81,17 +81,6 @@ Nov 22 15:52:27 localhost sshd[883]: pam_unix(sshd:session): session opened for 
 
 🌞 **Modifier le fichier de conf**
 
-- exécutez un `echo $RANDOM` pour demander à votre shell de vous fournir un nombre aléatoire
-  - simplement pour vous montrer la petite astuce et vous faire manipuler le shell :)
-- changez le port d'écoute du serveur SSH pour qu'il écoute sur ce numéro de port
-  - dans le compte-rendu je veux un `cat` du fichier de conf
-  - filtré par un `| grep` pour mettre en évidence la ligne que vous avez modifié
-- gérer le firewall
-  - fermer l'ancien port
-  - ouvrir le nouveau port
-  - vérifier avec un `firewall-cmd --list-all` que le port est bien ouvert
-    - vous filtrerez la sortie de la commande avec un `| grep TEXTE`
-
 ```bash
 [nathan@localhost ~]$ echo $RANDOM
 29876
@@ -193,8 +182,6 @@ tcp6       0      0 :::80                   :::*                    LISTEN      
 
 
 🌞 **Déterminer les processus liés à l'exécution de NGINX**
-
-- vous devez filtrer la sortie de la commande utilisée pour n'afficher que les lignes demandées
     
 ```bash
 [nathan@localhost ~]$ sudo ps aux | grep nginx
@@ -306,7 +293,7 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 🌞 **Visitez votre super site web**
 
 ```bash
-nathan@nathan-SSD-Linux:~/Documents/Github/tp-b1-linux$ curl http://192.168.60.16:80 | head -n 7
+[nathan@localhost /]$ curl http://192.168.60.16:80 | head -n 7
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100    37  100    37    0     0  22275      0 --:--:-- --:--:-- --:--:-- 37000
@@ -317,35 +304,50 @@ nathan@nathan-SSD-Linux:~/Documents/Github/tp-b1-linux$ curl http://192.168.60.1
 
 ## 2. Analyse des services existants
 
-Un service c'est quoi concrètement ? C'est juste un processus, que le système lance, et dont il s'occupe après.
-
-Il est défini dans un simple fichier texte, qui contient une info primordiale : la commande exécutée quand on "start" le service.
-
-Il est possible de définir beaucoup d'autres paramètres optionnels afin que notre service s'exécute dans de bonnes conditions.
-
 🌞 **Afficher le fichier de service SSH**
+  
+```bash
+[Unit]
+Description=OpenBSD Secure Shell server
+After=network.target auditd.service
+ConditionPathExists=!/usr/sbin/in.tftpd
 
-- vous pouvez obtenir son chemin avec un `systemctl status <SERVICE>`
-- mettez en évidence la ligne qui commence par `ExecStart=`
-  - encore un `cat <FICHIER> | grep <TEXTE>`
-  - c'est la ligne qui définit la commande lancée lorsqu'on "start" le service
-    - taper `systemctl start <SERVICE>` ou exécuter cette commande à la main, c'est (presque) pareil
+[Service]
+Type=notify
+EnvironmentFile=-/etc/sysconfig/sshd
+ExecStart=/usr/sbin/sshd $OPTIONS
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target
+```
 
 🌞 **Afficher le fichier de service NGINX**
 
-- mettez en évidence la ligne qui commence par `ExecStart=`
+```bash
+[Unit]
+Description=The nginx HTTP and reverse proxy server
+After=syslog.target network-online.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile=/run/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t
+ExecStart=/usr/sbin/nginx
+ExecReload=/usr/sbin/nginx -s reload
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+```
 
 ## 3. Création de service
 
-![Create service](./pics/create_service.png)
-
-Bon ! On va créer un petit service qui lance un `nc`. Et vous allez tout de suite voir pourquoi c'est pratique d'en faire un service et pas juste le lancer à la min.
-
-Ca reste un truc pour s'exercer, c'pas non plus le truc le plus utile de l'année que de mettre un `nc` dans un service n_n
-
 🌞 **Créez le fichier `/etc/systemd/system/tp2_nc.service`**
-
-- son contenu doit être le suivant (nice & easy)
 
 ```service
 [Unit]
@@ -354,44 +356,95 @@ Description=Super netcat tout fou
 [Service]
 ExecStart=/usr/bin/nc -l <PORT>
 ```
+```bash
+[Unit]
+Description=Super netcat tout fou
 
-> Vous remplacerez `<PORT>` par un numéro de port random obtenu avec la même méthode que précédemment.
+[Service]
+ExecStart=/usr/bin/nc -l 8657
+```
 
 🌞 **Indiquer au système qu'on a modifié les fichiers de service**
 
-- la commande c'est `sudo systemctl daemon-reload`
+```bash
+[nathan@localhost ~]$ sudo systemctl daemon-reload
+```
 
 🌞 **Démarrer notre service de ouf**
-
-- avec une commande `systemctl start`
+  
+```bash
+[nathan@localhost ~]$ sudo systemctl start tp2_nc.service
+```
 
 🌞 **Vérifier que ça fonctionne**
 
-- vérifier que le service tourne avec un `systemctl status <SERVICE>`
-- vérifier que `nc` écoute bien derrière un port avec un `ss`
-  - vous filtrerez avec un `| grep` la sortie de la commande pour n'afficher que les lignes intéressantes
-- vérifer que juste ça marche en vous connectant au service depuis votre PC
+```bash
+[nathan@localhost ~]$ sudo systemctl status tp2_nc.service
+● tp2_nc.service - Super netcat tout fou
+   Loaded: loaded (/etc/systemd/system/tp2_nc.service; disabled; vendor preset: disabled)
+   Active: active (running) since Wed 2021-03-10 15:56:36 CET; 2s ago
+ Main PID: 1007 (nc)
+    Tasks: 1 (limit: 4915)
+   Memory: 1.1M
+   CGroup: /system.slice/tp2_nc.service
+           └─1007 /usr/bin/nc -l 8657
 
-➜ Si vous vous connectez avec le client, que vous envoyez éventuellement des messages, et que vous quittez `nc` avec un CTRL+C, alors vous pourrez constater que le service s'est stoppé
+Mar 10 15:56:36 localhost.localdomain systemd[1]: Started Super netcat tout fou.
 
-- bah oui, c'est le comportement de `nc` ça ! 
-- le client se connecte, et quand il se tire, ça ferme `nc` côté serveur aussi
-- faut le relancer si vous voulez retester !
+```
+
+```bash
+[nathan@localhost ~]$ sudo ss -tulpn | grep 8657
+LISTEN     0      128          *:8657                   *:*                   users:(("nc",pid=1007,fd=3))
+```
 
 🌞 **Les logs de votre service**
 
-- mais euh, ça s'affiche où les messages envoyés par le client ? Dans les logs !
-- `sudo journalctl -xe -u tp2_nc` pour visualiser les logs de votre service
-- `sudo journalctl -xe -u tp2_nc -f ` pour visualiser **en temps réel** les logs de votre service
-  - `-f` comme follow (on "suit" l'arrivée des logs en temps réel)
-- dans le compte-rendu je veux
-  - une commande `journalctl` filtrée avec `grep` qui affiche la ligne qui indique le démarrage du service
-  - une commande `journalctl` filtrée avec `grep` qui affiche un message reçu qui a été envoyé par le client
-  - une commande `journalctl` filtrée avec `grep` qui affiche la ligne qui indique l'arrêt du service
+```bash
+[nathan@localhost ~]$ sudo journalctl -xe -u tp2_nc
+-- Logs begin at Wed 2021-03-10 15:56:36 CET, end at Wed 2021-03-10 15:57:00 CET. --
+Mar 10 15:57:36 localhost.localdomain systemd[1]: Started Super netcat tout fou.
+Mar 10 15:57:36 localhost.localdomain nc[1007]: Ncat: Version 7.70 ( https://nmap.org/ncat )
+Mar 10 15:57:36 localhost.localdomain nc[1007]: Ncat: Listening on :::8657
+Mar 10 15:57:36 localhost.localdomain nc[1007]: Ncat: Listening on
+```
+
+```bash
+[nathan@localhost ~]$ sudo journalctl -xe -u tp2_nc -f
+-- Logs begin at Wed 2021-03-10 15:56:36 CET, end at Wed 2021-03-10 15:57:00 CET. --
+Mar 10 15:57:36 localhost.localdomain systemd[1]: Started Super netcat tout fou.
+Mar 10 15:57:36 localhost.localdomain nc[1007]: Ncat: Version 7.70 ( https://nmap.org/ncat )
+Mar 10 15:57:36 localhost.localdomain nc[1007]: Ncat: Listening on :::8657
+Mar 10 15:57:36 localhost.localdomain nc[1007]: Ncat: Listening on
+```
+
+```bash
+[nathan@localhost ~]$ sudo journalctl -xe -u tp2_nc | grep "Started Super netcat tout fou"
+Mar 10 15:57:36 localhost.localdomain systemd[1]: Started Super netcat tout fou.
+```
+
+```bash
+[nathan@localhost ~]$ sudo journalctl -xe -u tp2_nc | grep "Ncat: Connection from"
+Mar 10 15:57:36 localhost.localdomain nc[1007]: Ncat: Connection from
+```
+
+```bash
+[nathan@localhost ~]$ sudo journalctl -xe -u tp2_nc | grep "Stopped Super netcat tout fou"
+Mar 10 15:57:36 localhost.localdomain systemd[1]: Stopped Super netcat tout fou.
+```
 
 🌞 **Affiner la définition du service**
 
-- faire en sorte que le service redémarre automatiquement s'il se termine
-  - comme ça, quand un client se co, puis se tire, le service se relancera tout seul
-  - ajoutez `Restart=always` dans la section `[Service]` de votre service
-  - n'oubliez pas d'indiquer au système que vous avez modifié les fichiers de service :)
+```bash
+[Unit]
+Description=Super netcat tout fou
+
+[Service]
+ExecStart=/usr/bin/nc -l 8657
+Restart=always
+```
+
+```bash
+[nathan@localhost ~]$ sudo systemctl daemon-reload
+```
+
