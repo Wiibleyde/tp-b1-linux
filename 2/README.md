@@ -3,8 +3,6 @@
 # Sommaire
 
 - [TP2 : Appréhender l'environnement Linux](#tp2--appréhender-lenvironnement-linux)
-- [Sommaire](#sommaire)
-  - [Checklist](#checklist)
 - [I. Service SSH](#i-service-ssh)
   - [1. Analyse du service](#1-analyse-du-service)
   - [2. Modification du service](#2-modification-du-service)
@@ -425,7 +423,7 @@ Mar 10 15:57:36 localhost.localdomain systemd[1]: Started Super netcat tout fou.
 
 ```bash
 [nathan@localhost ~]$ sudo journalctl -xe -u tp2_nc | grep "Ncat: Connection from"
-Mar 10 15:57:36 localhost.localdomain nc[1007]: Ncat: Connection from
+Mar 10 15:57:36 localhost.localdomain nc[1007]: Ncat: Connection from 10.33.18.231 60800
 ```
 
 ```bash
