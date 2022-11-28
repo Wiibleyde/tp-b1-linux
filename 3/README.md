@@ -29,22 +29,22 @@ IP address is 10.33.18.254/22
 RAM : 3,9Gi memory avialable on 15Gi total memory
 Disk : 119G space left
 Top 5 processes by RAM usage :
-  -  /usr/share/discord/Discord
-  -  /opt/brave.com/brave/brave
-  -  /usr/share/code/code
-  -  /usr/bin/plasmashell
-  -  /usr/share/code/code
+  - /usr/share/discord/Discord
+  - /opt/brave.com/brave/brave
+  - /usr/share/code/code
+  - /usr/bin/plasmashell
+  - /usr/share/code/code
 Listening ports :
-  -  udp 5353 : avahi-daemon
-  -  udp 53 : dnsmasq
-  -  udp 53 : systemd-resolve
-  -  udp 67 : dnsmasq
-  -  udp 631 : cups-browsed
-  -  tcp 6463 : Discord
-  -  tcp 46795 : code
-  -  tcp 53 : dnsmasq
-  -  tcp 53 : systemd-resolve
-  -  tcp 631 : cupsd
+  - udp 5353 : avahi-daemon
+  - udp 53 : dnsmasq
+  - udp 53 : systemd-resolve
+  - udp 67 : dnsmasq
+  - udp 631 : cups-browsed
+  - tcp 6463 : Discord
+  - tcp 46795 : code
+  - tcp 53 : dnsmasq
+  - tcp 53 : systemd-resolve
+  - tcp 631 : cupsd
 Here is your random cat : ./cat.jpg
 ```
 
