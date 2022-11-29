@@ -79,9 +79,9 @@ WantedBy=multi-user.target
 
 ## Rendu
 
-Fichier : [yt.service](/3/srv/yt-2/yt-2.service)
+Fichier : [yt-2.bash](/3/srv/yt-2/yt-2.sh)
 
-Fichier service : [yt-2.service](/3/srv/yt-2/yt.service)
+Fichier service : [yt.service](/3/srv/yt-2/yt.service)
 
 🌞 Vous fournirez dans le compte-rendu, en plus des fichiers :
 
