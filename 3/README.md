@@ -60,7 +60,7 @@ Log : [download.log](/3/srv/yt/download.log)
 ```bash
 nathan@nathan-SSD-Linux:~/Documents/Github/tp-b1-linux/3/srv/yt$ ./yt.sh https://youtu.be/tPEE9ZwTmy0
 Video https://youtu.be/tPEE9ZwTmy0 was downloaded.
-File path: download/Shortest Video on Youtube-tPEE9ZwTmy0/Shortest Video on Youtube-tPEE9ZwTmy0.mp4
+File path: downloads/Shortest Video on Youtube-tPEE9ZwTmy0/Shortest Video on Youtube-tPEE9ZwTmy0.mp4
 ```
 
 # III. MAKE IT A SERVICE
@@ -101,9 +101,9 @@ Fichier service : [yt.service](/3/srv/yt-2/yt.service)
 ```bash
 Nov 29 16:02:28 nathan-SSD-Linux systemd[1]: Started Youtube Auto Downloader.
 Nov 29 16:02:28 nathan-SSD-Linux bash[23176]: Video https://youtu.be/tPEE9ZwTmy0 was downloaded.
-Nov 29 16:02:28 nathan-SSD-Linux bash[23176]: File path: download/Shortest Video on Youtube-tPEE9ZwTmy0/Shortest Video on Youtube-tPEE9ZwTmy0.mp4
+Nov 29 16:02:28 nathan-SSD-Linux bash[23176]: File path: downloads/Shortest Video on Youtube-tPEE9ZwTmy0/Shortest Video on Youtube-tPEE9ZwTmy0.mp4
 Nov 29 16:02:28 nathan-SSD-Linux bash[23176]: Video https://youtu.be/9bZkp7q19f0 was downloaded.
-Nov 29 16:02:28 nathan-SSD-Linux bash[23176]: File path: download/Shortest Video on Youtube-9bZkp7q19f0/Shortest Video on Youtube-9bZkp7q19f0.mp4
+Nov 29 16:02:28 nathan-SSD-Linux bash[23176]: File path: downloads/Shortest Video on Youtube-9bZkp7q19f0/Shortest Video on Youtube-9bZkp7q19f0.mp4
 ```
 
 🌟**BONUS** : get fancy. Livrez moi un gif ou un [asciinema](https://asciinema.org/) (PS : c'est le feu asciinema) de votre service en action, où on voit les URLs de vidéos disparaître, et les fichiers apparaître dans le fichier de destination
