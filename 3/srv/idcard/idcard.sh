@@ -1,4 +1,7 @@
 #!/bin/bash
+blue='\033[0;34m'
+green='\033[0;32m'
+red='\033[0;31m'
 echo "Machine name : $(hostname)"
 echo "OS $(cat /etc/*release | grep PRETTY_NAME | cut -d= -f2) and kernel version is $(uname -r)"
 ip=$(ip -4 addr | grep inet | tr -s ' ' | cut -d' ' -f3 | cut -d$'\n' -f2)
@@ -20,4 +23,4 @@ while read -r line; do
     echo "  - $protocol $port : $service"
 done <<< "$fullline"
 curl -s https://cataas.com/cat > ./cat.jpg
-echo "Here is your random cat : ./cat.jpg"
+echo -e "Here is your random \e[34mcat\e[39m : ./cat.jpg"
