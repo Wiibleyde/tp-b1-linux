@@ -5,6 +5,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 rm .temp/error > /dev/null 2> /dev/null
+ls download 2> /dev/null > /dev/null
+if [ $? -ne 0 ]; then
+    echo "Error: download/ does not exist"
+    exit 1
+fi
 youtube-dl $1 -o "download/%(title)s-%(id)s/%(title)s-%(id)s.%(ext)s" -f mp4 > /dev/null 2> /dev/null
 youtube-dl $1 --write-description -o "download/%(title)s-%(id)s/description/%(title)s-%(id)s.%(ext)s" --skip-download > /dev/null 2> /dev/null
 id=$(youtube-dl $1 --get-id --skip-download --quiet)
