@@ -79,7 +79,7 @@ WantedBy=multi-user.target
 
 ## Rendu
 
-Fichier : [yt-2.bash](/3/srv/yt/yt-v2.sh)
+Fichier : [yt-v2.sh](/3/srv/yt/yt-v2.sh)
 
 Fichier service : [yt.service](/3/srv/yt/yt.service)
 
