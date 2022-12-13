@@ -2,9 +2,9 @@
 Description=Youtube Auto Downloader
 
 [Service]
-ExecStart=/bin/bash /home/nathan/Documents/Github/tp-b1-linux/3/srv/yt-2/yt-2.sh
+ExecStart=/bin/bash /home/nathan/Documents/Github/tp-b1-linux/3/srv/yt/yt-v2.sh
 User=nathan
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
-Restart=always
