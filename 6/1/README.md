@@ -162,21 +162,24 @@ nathan@nathan-SSD-Linux:~$ curl 10.105.1.13 -s | head -n 10 # web.tp6.linux beca
 
 🌞 **Faites en sorte de**
 
-- rendre le serveur `web.tp5.linux` injoignable
-- sauf depuis l'IP du reverse proxy
-- en effet, les clients ne doivent pas joindre en direct le serveur web : notre reverse proxy est là pour servir de serveur frontal
-- **comment ?** Je vous laisser là encore chercher un peu par vous-mêmes (hint : firewall)
-
 ```bash
-[nathan@web ~]$ sudo firewall-cmd --zone=public --add-source=10.105.1.13 --permanent
-[sudo] password for nathan: 
-success
-[nathan@web ~]$ sudo firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address="10.105.1.13" accept' --permanent
-success
-[nathan@web ~]$ sudo firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address="0.0.0.0/0" drop' --permanent
-success
-[nathan@web ~]$ sudo firewall-cmd --reload
-success
+[nathan@web ~]$ sudo firewall-cmd --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3 enp0s8
+  sources: 
+  services: 
+  ports: 
+  protocols: 
+  forward: yes
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+        rule family="ipv4" source address="10.105.1.1" port port="22" protocol="tcp" accept
+        rule family="ipv4" source address="10.105.1.13" port port="80" protocol="tcp" accept
 ```
 
 🌞 **Une fois que c'est en place**
@@ -208,20 +211,6 @@ nathan@nathan-SSD-Linux:~$
 ```
 
 # II. HTTPS
-
-Le but de cette section est de permettre une connexion chiffrée lorsqu'un client se connecte. Avoir le ptit HTTPS :)
-
-Le principe :
-
-- on génère une paire de clés sur le serveur `proxy.tp6.linux`
-  - une des deux clés sera la clé privée : elle restera sur le serveur et ne bougera jamais
-  - l'autre est la clé publique : elle sera stockée dans un fichier appelé *certificat*
-    - le *certificat* est donné à chaque client qui se connecte au site
-- on ajuste la conf NGINX
-  - on lui indique le chemin vers le certificat et la clé privée afin qu'il puisse les utiliser pour chiffrer le trafic
-  - on lui demande d'écouter sur le port convetionnel pour HTTPS : 443 en TCP
-
-Je vous laisse Google vous-mêmes "nginx reverse proxy nextcloud" ou ce genre de chose :)
 
 🌞 **Faire en sorte que NGINX force la connexion en HTTPS plutôt qu'HTTP**
 
