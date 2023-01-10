@@ -18,78 +18,40 @@
 
 🌞 **Ecrire le script `bash`**
 
-- il s'appellera `tp6_backup.sh`
-- il devra être stocké dans le dossier `/srv` sur la machine `web.tp6.linux`
-- le script doit commencer par un *shebang* qui indique le chemin du programme qui exécutera le contenu du script
-  - ça ressemble à ça si on veut utiliser `/bin/bash` pour exécuter le contenu de notre script :
+The script can be found : [here](tp6_backup.sh)
 
-```
-#!/bin/bash
-```
-
-- pour apprendre quels dossiers il faut sauvegarder dans tout le bordel de NextCloud, [il existe une page de la doc officielle qui vous informera](https://docs.nextcloud.com/server/latest/admin_manual/maintenance/backup.html)
-- vous devez compresser les dossiers importants
-  - au format `.zip` ou `.tar.gz`
-  - le fichier produit sera stocké dans le dossier `/srv/backup/`
-  - il doit comporter la date, l'heure la minute et la seconde où a été effectué la sauvegarde
-    - par exemple : `nextcloud_2211162108.tar.gz`
-
-> On utilise la notation américaine de la date `yymmdd` avec l'année puis le mois puis le jour, comme ça, un tri alphabétique des fichiers correspond à un tri dans l'ordre temporel :)
-
-### 2. Clean it
-
-On va rendre le script un peu plus propre vous voulez bien ?
-
-➜ **Utiliser des variables** déclarées en début de script pour stocker les valeurs suivantes :
-
-- le nom du fichier `.tar.gz` ou `zip` produit par le script
+Example of output :
 
 ```bash
-# Déclaration d'une variable toto qui contient la string "tata"
-toto="tata"
-
-# Appel de la variable toto
-# Notez l'utilisation du dollar et des double quotes
-echo "$toto"
-```
-
----
-
-➜ **Commentez le script**
-
-- au minimum un en-tête sous le shebang
-  - date d'écriture du script
-  - nom/pseudo de celui qui l'a écrit
-  - un résumé TRES BREF de ce que fait le script
-
----
-
-➜ **Environnement d'exécution du script**
-
-- créez un utilisateur sur la machine `web.tp6.linux`
-  - il s'appellera `backup`
-  - son homedir sera `/srv/backup/`
-  - son shell sera `/usr/bin/nologin`
-- cet utilisateur sera celui qui lancera le script
-- le dossier `/srv/backup/` doit appartenir au user `backup`
-- pour tester l'exécution du script en tant que l'utilisateur `backup`, utilisez la commande suivante :
-
-```bash
-$ sudo -u backup /srv/tp6_backup.sh
+[nathan@web srv]$ sudo ./tp6_backup.sh 
+Filename : nextcloud_20230110113107.tar.gz saved in /srv/backup
 ```
 
 ### 3. Service et timer
 
 🌞 **Créez un *service*** système qui lance le script
 
-- inspirez-vous des *services* qu'on a créés et/ou manipulés jusqu'à maintenant
-- la seule différence est que vous devez rajouter `Type=oneshot` dans la section `[Service]` pour indiquer au système que ce service ne tournera pas à l'infini (comme le fait un serveur web par exemple) mais se terminera au bout d'un moment
-- vous appelerez le service `backup.service`
-- assurez-vous qu'il fonctionne en utilisant des commandes `systemctl`
-
 ```bash
-$ sudo systemctl status backup
-$ sudo systemctl start backup
+[nathan@web system]$ sudo systemctl status backup
+○ backup.service - Backup script for nextcloud
+     Loaded: loaded (/etc/systemd/system/backup.service; static)
+     Active: inactive (dead)
+[nathan@web srv]$ sudo systemctl start backup
+[nathan@web srv]$ sudo systemctl status backup
+○ backup.service - Backup script for nextcloud
+     Loaded: loaded (/etc/systemd/system/backup.service; static)
+     Active: inactive (dead)
+
+Jan 10 11:54:03 web systemd[1]: Starting Backup script for nextcloud...
+Jan 10 11:54:03 web bash[14913]: tar: Removing leading `/` from member names
+Jan 10 11:54:52 web bash[14911]: Filename : nextcloud_20230110115403.tar.gz saved in /srv/backup
+Jan 10 11:54:52 web systemd[1]: backup.service: Deactivated successfully.
+Jan 10 11:54:52 web systemd[1]: Finished Backup script for nextcloud.
+Jan 10 11:54:52 web systemd[1]: backup.service: Consumed 34.619s CPU time.
+[nathan@web srv]$ cd backup/
+[nathan@web backup]$ ls
+nextcloud_20230110115403.tar.gz
+
 ```
 
 🌞 **Créez un *timer*** système qui lance le *service* à intervalles réguliers
