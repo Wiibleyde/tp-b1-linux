@@ -80,6 +80,8 @@ Jan 14 13:43:22 web ebpf.plugin[2485]: Cannot read process groups configuration 
 DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1063803595549585459/s9rgde5306lV_8LwS3Fh2vj856I9npEX8eTh2y9slThRs8SxtDTw61iWTXPAnpjAoQGq"
 ```
 
+*I had to delete the webhook URL because I've been instantly got spammed by a bot which see the url on Github...*
+
 🌞 **Vérifier que les alertes fonctionnent**
 
 ```bash
